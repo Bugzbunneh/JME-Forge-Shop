@@ -2,17 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../api/products";
 import ProductImage from "../components/ProductImage";
-import { useAddedProductsStore } from "../stores/useAddedProductsStore";
 import { useProductFilterStore } from "../stores/useProductFilterStore";
 
 const Products = () => {
-  const { data: fetchedProducts, isLoading } = useQuery({
+  const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
-  const addedProducts = useAddedProductsStore((state) => state.products);
-
-  const products = fetchedProducts ? [...addedProducts, ...fetchedProducts] : undefined;
 
   const category = useProductFilterStore((state) => state.category);
   const setCategory = useProductFilterStore((state) => state.setCategory);

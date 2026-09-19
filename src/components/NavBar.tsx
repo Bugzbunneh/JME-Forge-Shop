@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import AccountNavLink from "./AccountNavLink";
 import InstagramIcon from "./InstagramIcon";
 
 const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
@@ -26,15 +27,17 @@ const NavBar = () => {
           Josh Ellison
         </NavLink>
 
-        <a
-          href="https://www.instagram.com/jme_forge"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Josh Ellison on Instagram"
-          className="justify-self-end"
-        >
-          <InstagramIcon className="h-7 w-7" />
-        </a>
+        <div className="flex items-center gap-5 justify-self-end">
+          <a
+            href="https://www.instagram.com/jme_forge"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Josh Ellison on Instagram"
+          >
+            <InstagramIcon className="h-7 w-7" />
+          </a>
+          <AccountNavLink />
+        </div>
       </div>
     </header>
   );

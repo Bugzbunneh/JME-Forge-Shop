@@ -1,75 +1,57 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { products as staticProducts } from "../data/products";
-import { useAddedProductsStore } from "../stores/useAddedProductsStore";
-import type { Product } from "../types/product";
+import { createProduct } from "../api/products";
 import { slugify } from "../utils/slugify";
-
-const readFileAsDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 
 const AddProduct = () => {
   const navigate = useNavigate();
-  const addProduct = useAddedProductsStore((state) => state.addProduct);
-  const addedProducts = useAddedProductsStore((state) => state.products);
+  const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("New Arrivals");
   const [soldOut, setSoldOut] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-    const dataUrls = await Promise.all(Array.from(files).map(readFileAsDataUrl));
-    setImages(dataUrls);
+  const mutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: (product) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      navigate(`/products/${product.slug}`);
+    },
+  });
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files ? Array.from(event.target.files) : [];
+    setImageFiles(files);
+    setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setError(null);
+    setFormError(null);
 
     const trimmedTitle = title.trim();
     const parsedPrice = Number(price);
 
     if (!trimmedTitle || !description.trim() || Number.isNaN(parsedPrice)) {
-      setError("Please fill in a title, a valid price, and a description.");
+      setFormError("Please fill in a title, a valid price, and a description.");
       return;
     }
 
-    const baseSlug = slugify(trimmedTitle) || "product";
-    const existingSlugs = new Set([
-      ...staticProducts.map((product) => product.slug),
-      ...addedProducts.map((product) => product.slug),
-    ]);
-    let slug = baseSlug;
-    let suffix = 2;
-    while (existingSlugs.has(slug)) {
-      slug = `${baseSlug}-${suffix}`;
-      suffix += 1;
-    }
-
-    const newProduct: Product = {
-      id: crypto.randomUUID(),
-      slug,
+    mutation.mutate({
+      slug: slugify(trimmedTitle) || `product-${Date.now()}`,
       name: trimmedTitle,
       price: parsedPrice,
       category: category.trim() || "New Arrivals",
       description: description.trim(),
       soldOut,
-      images,
-    };
-
-    addProduct(newProduct);
-    navigate(`/products/${slug}`);
+      imageFiles,
+    });
   };
 
   return (
@@ -161,10 +143,10 @@ const AddProduct = () => {
             onChange={handleImageChange}
             className="mt-2 w-full text-sm text-neutral-400 file:mr-4 file:border file:border-neutral-700 file:bg-neutral-800 file:px-4 file:py-2 file:text-white"
           />
-          {images.length > 0 && (
+          {previewUrls.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-3">
-              {images.map((src, index) => (
-                <img key={index} src={src} alt="" className="h-16 w-16 object-cover" />
+              {previewUrls.map((src) => (
+                <img key={src} src={src} alt="" className="h-16 w-16 object-cover" />
               ))}
             </div>
           )}
@@ -183,13 +165,19 @@ const AddProduct = () => {
           Sold out
         </label>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {formError && <p className="text-sm text-red-400">{formError}</p>}
+        {mutation.isError && (
+          <p className="text-sm text-red-400">
+            Something went wrong saving this product. Please try again.
+          </p>
+        )}
 
         <button
           type="submit"
-          className="w-full border border-white py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900"
+          disabled={mutation.isPending}
+          className="w-full border border-white py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add product
+          {mutation.isPending ? "Saving…" : "Add product"}
         </button>
       </form>
     </section>
