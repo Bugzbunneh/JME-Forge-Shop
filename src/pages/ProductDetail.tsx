@@ -2,22 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { fetchProductBySlug } from "../api/products";
 import ProductImage from "../components/ProductImage";
-import { useAddedProductsStore } from "../stores/useAddedProductsStore";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const addedProducts = useAddedProductsStore((state) => state.products);
-  const addedProduct = addedProducts.find((item) => item.slug === slug);
 
-  const { data: fetchedProduct, isLoading } = useQuery({
+  const { data: product, isLoading } = useQuery({
     queryKey: ["product", slug],
     queryFn: () => fetchProductBySlug(slug ?? ""),
-    enabled: Boolean(slug) && !addedProduct,
+    enabled: Boolean(slug),
   });
 
-  const product = addedProduct ?? fetchedProduct;
-
-  if (isLoading && !addedProduct) {
+  if (isLoading) {
     return <p className="mx-auto max-w-5xl px-6 py-16 text-center text-neutral-500">Loading…</p>;
   }
 
