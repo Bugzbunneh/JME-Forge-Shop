@@ -18,7 +18,8 @@ const AccountNavLink = () => {
       to="/login"
       className="text-xs uppercase tracking-widest text-neutral-400 transition-colors hover:text-white"
     >
-      Login / Register
+      <span className="sm:hidden">Login</span>
+      <span className="hidden sm:inline">Login / Register</span>
     </Link>
   );
 };

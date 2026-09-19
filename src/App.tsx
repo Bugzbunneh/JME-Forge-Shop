@@ -1,11 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AdminLayout from "./components/AdminLayout";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
+import RequireSuperUser from "./components/RequireSuperUser";
 import { supabase } from "./lib/supabaseClient";
 import Account from "./pages/Account";
 import AddProduct from "./pages/AddProduct";
+import AllOrders from "./pages/admin/AllOrders";
+import EditProduct from "./pages/admin/EditProduct";
+import ManageProducts from "./pages/admin/ManageProducts";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
@@ -37,10 +42,17 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:slug" element={<ProductDetail />} />
-            <Route path="/addproduct" element={<AddProduct />} />
             <Route path="/login" element={<Auth />} />
             <Route element={<RequireAuth />}>
               <Route path="/account" element={<Account />} />
+            </Route>
+            <Route element={<RequireSuperUser />}>
+              <Route path="/addproduct" element={<AddProduct />} />
+              <Route element={<AdminLayout />}>
+                <Route path="/admin/orders" element={<AllOrders />} />
+                <Route path="/admin/products" element={<ManageProducts />} />
+                <Route path="/admin/products/:id/edit" element={<EditProduct />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

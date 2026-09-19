@@ -11,7 +11,6 @@ const AddProduct = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("New Arrivals");
   const [soldOut, setSoldOut] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -26,9 +25,19 @@ const AddProduct = () => {
   });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files ? Array.from(event.target.files) : [];
-    setImageFiles(files);
-    setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
+    const newFiles = event.target.files ? Array.from(event.target.files) : [];
+    const combinedFiles = [...imageFiles, ...newFiles];
+    setImageFiles(combinedFiles);
+    setPreviewUrls(combinedFiles.map((file) => URL.createObjectURL(file)));
+    event.target.value = "";
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    const removedPreviewUrl = previewUrls[indexToRemove];
+    URL.revokeObjectURL(removedPreviewUrl);
+
+    setImageFiles(imageFiles.filter((_, index) => index !== indexToRemove));
+    setPreviewUrls(previewUrls.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -47,7 +56,6 @@ const AddProduct = () => {
       slug: slugify(trimmedTitle) || `product-${Date.now()}`,
       name: trimmedTitle,
       price: parsedPrice,
-      category: category.trim() || "New Arrivals",
       description: description.trim(),
       soldOut,
       imageFiles,
@@ -98,22 +106,6 @@ const AddProduct = () => {
 
         <div>
           <label
-            htmlFor="category"
-            className="block text-xs uppercase tracking-widest text-neutral-400"
-          >
-            Category
-          </label>
-          <input
-            id="category"
-            type="text"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label
             htmlFor="description"
             className="block text-xs uppercase tracking-widest text-neutral-400"
           >
@@ -145,8 +137,18 @@ const AddProduct = () => {
           />
           {previewUrls.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-3">
-              {previewUrls.map((src) => (
-                <img key={src} src={src} alt="" className="h-16 w-16 object-cover" />
+              {previewUrls.map((src, index) => (
+                <div key={src} className="relative">
+                  <img src={src} alt="" className="h-24 w-24 object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    aria-label="Remove image"
+                    className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center bg-neutral-900 text-white hover:bg-red-500"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           )}

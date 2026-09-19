@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { fetchProductBySlug } from "../api/products";
-import ProductImage from "../components/ProductImage";
+import ProductGallery from "../components/ProductGallery";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -31,18 +31,7 @@ const ProductDetail = () => {
       </p>
 
       <div className="mt-8 grid gap-10 sm:grid-cols-2">
-        <div>
-          <div className="bg-neutral-800">
-            <ProductImage
-              slug={product.slug}
-              images={product.images}
-              className="aspect-square w-full object-cover"
-            />
-          </div>
-          <p className="mt-2 text-center text-xs text-neutral-500">
-            Image 1 of {product.images && product.images.length > 0 ? product.images.length : 1}
-          </p>
-        </div>
+        <ProductGallery slug={product.slug} images={product.images} />
 
         <div>
           <h1 className="text-3xl font-light tracking-tight text-white">{product.name}</h1>
