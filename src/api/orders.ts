@@ -9,6 +9,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  userId: string;
   status: string;
   total: number;
   createdAt: string;
@@ -27,6 +28,7 @@ interface OrderRow {
   status: string;
   total: number;
   created_at: string;
+  user_id: string;
   order_items: OrderItemRow[];
 }
 
@@ -44,6 +46,7 @@ const fromOrderRow = (row: OrderRow): Order => {
   const items = row.order_items.map(fromItemRow);
   const order: Order = {
     id: row.id,
+    userId: row.user_id,
     status: row.status,
     total: row.total,
     createdAt: row.created_at,
@@ -52,11 +55,27 @@ const fromOrderRow = (row: OrderRow): Order => {
   return order;
 };
 
+const orderSelectColumns =
+  "id, status, total, created_at, user_id, order_items(id, product_id, quantity, unit_price)";
+
 export const fetchOrders = async (userId: string): Promise<Order[]> => {
   const { data, error } = await supabase
     .from("orders")
-    .select("id, status, total, created_at, order_items(id, product_id, quantity, unit_price)")
+    .select(orderSelectColumns)
     .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  const orderRows = data as OrderRow[];
+  const orders = orderRows.map(fromOrderRow);
+  return orders;
+};
+
+export const fetchAllOrders = async (): Promise<Order[]> => {
+  const { data, error } = await supabase
+    .from("orders")
+    .select(orderSelectColumns)
     .order("created_at", { ascending: false });
 
   if (error) throw error;

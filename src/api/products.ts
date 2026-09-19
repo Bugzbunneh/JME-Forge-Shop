@@ -6,7 +6,6 @@ interface ProductRow {
   slug: string;
   name: string;
   price: number;
-  category: string;
   description: string;
   sold_out: boolean;
   images: string[];
@@ -17,7 +16,6 @@ const fromRow = (row: ProductRow): Product => ({
   slug: row.slug,
   name: row.name,
   price: row.price,
-  category: row.category,
   description: row.description,
   soldOut: row.sold_out,
   images: row.images,
@@ -44,17 +42,23 @@ export const fetchProductBySlug = async (slug: string): Promise<Product | undefi
   return data ? fromRow(data as ProductRow) : undefined;
 };
 
+export const fetchProductById = async (id: string): Promise<Product | undefined> => {
+  const { data, error } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+
+  if (error) throw error;
+  return data ? fromRow(data as ProductRow) : undefined;
+};
+
 export interface NewProduct {
   slug: string;
   name: string;
   price: number;
-  category: string;
   description: string;
   soldOut: boolean;
   imageFiles: File[];
 }
 
-const uploadProductImages = async (slug: string, files: File[]): Promise<string[]> => {
+export const uploadProductImages = async (slug: string, files: File[]): Promise<string[]> => {
   const urls: string[] = [];
 
   for (const [index, file] of files.entries()) {
@@ -80,7 +84,6 @@ export const createProduct = async (newProduct: NewProduct): Promise<Product> =>
       slug: newProduct.slug,
       name: newProduct.name,
       price: newProduct.price,
-      category: newProduct.category,
       description: newProduct.description,
       sold_out: newProduct.soldOut,
       images,
@@ -90,4 +93,42 @@ export const createProduct = async (newProduct: NewProduct): Promise<Product> =>
 
   if (error) throw error;
   return fromRow(data as ProductRow);
+};
+
+export interface ProductUpdate {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  description: string;
+  soldOut: boolean;
+  newImageFiles: File[];
+}
+
+export const updateProduct = async (update: ProductUpdate): Promise<Product> => {
+  const payload: Record<string, unknown> = {
+    name: update.name,
+    price: update.price,
+    description: update.description,
+    sold_out: update.soldOut,
+  };
+
+  if (update.newImageFiles.length > 0) {
+    payload.images = await uploadProductImages(update.slug, update.newImageFiles);
+  }
+
+  const { data, error } = await supabase
+    .from("products")
+    .update(payload)
+    .eq("id", update.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return fromRow(data as ProductRow);
+};
+
+export const deleteProduct = async (id: string): Promise<void> => {
+  const { error } = await supabase.from("products").delete().eq("id", id);
+  if (error) throw error;
 };

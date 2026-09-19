@@ -64,15 +64,24 @@ one change in it, then apply it with:
 pnpm exec supabase db push
 ```
 
-### Security note
+### Admin area
 
-There is no admin/super-user login yet — the `/addproduct` page (not linked anywhere in the
-site nav) writes to Supabase using the public anon key, and the initial migration currently
-leaves the `products` insert policy (and the `product-images` storage upload policy) open to
-anyone who has that key. This is intentional for now, but **must** be locked down to
-authenticated super-users only once auth is built — the schema already includes a
-`profiles.is_super_user` flag for that purpose, and the migration file has comments marking
-exactly what to change.
+Signed-in users with `profiles.is_super_user = true` see an "Admin" link in the nav, leading to
+a permanent left-hand admin section with **All orders** (`/admin/orders`) and **Manage
+products** (`/admin/products`, including create/edit/delete). `/addproduct` also now requires
+super-user auth — the `products`/`order`/`order_items` RLS policies and the `product-images`
+storage upload policy are scoped to `profiles.is_super_user` (see
+`supabase/migrations/20260919224249_admin_permissions.sql`), replacing the temporary
+anyone-with-the-anon-key policies from earlier in development.
+
+To make an account a super user (there's no self-service UI for this — it's meant to be rare):
+
+```sql
+update public.profiles set is_super_user = true where id = '<user-id>';
+```
+
+Run that once in the Supabase dashboard's SQL Editor (find the user's id under
+**Authentication > Users**).
 
 ## Before going live
 
@@ -84,8 +93,6 @@ exactly what to change.
   SMTP Settings** in the Supabase dashboard. Until then, "Confirm email" can be turned off
   under **Authentication > Sign In / Providers > Email** to keep testing signup/login locally
   without sending any email at all.
-- **Lock down the temporary open write policies** described in the security note above, once
-  super-user auth exists.
 
 ## Scripts
 

@@ -145,8 +145,8 @@ const Account = () => {
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-light tracking-tight text-white">Your account</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-light tracking-tight text-white sm:text-3xl">Your account</h1>
         <button
           type="button"
           onClick={handleSignOut}
