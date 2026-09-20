@@ -3,6 +3,8 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { createCheckoutSession } from "../api/checkout";
 import { fetchProductBySlug } from "../api/products";
 import ProductGallery from "../components/ProductGallery";
+import { useSeo } from "../hooks/useSeo";
+import { getProductJsonLd, getProductMeta } from "../seo/seo";
 import { useAuthStore } from "../stores/useAuthStore";
 import type { Product } from "../types/product";
 
@@ -61,8 +63,20 @@ const ProductDetail = () => {
     return <Navigate to="/products" replace />;
   }
 
+  return <ProductDetailContent product={product} />;
+};
+
+const ProductDetailContent = ({ product }: { product: Product }) => {
+  useSeo(getProductMeta(product));
+
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getProductJsonLd(product)) }}
+      />
+
       <p className="text-xs uppercase tracking-widest text-neutral-500">
         <Link to="/products" className="hover:text-white">
           Products from the forge
@@ -72,7 +86,11 @@ const ProductDetail = () => {
       </p>
 
       <div className="mt-8 grid gap-10 sm:grid-cols-2">
-        <ProductGallery slug={product.slug} images={product.images} />
+        <ProductGallery
+          slug={product.slug}
+          images={product.images}
+          alt={`${product.name} — handmade knife by JME Forge Shop`}
+        />
 
         <div>
           <h1 className="text-3xl font-light tracking-tight text-white">{product.name}</h1>

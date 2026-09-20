@@ -41,6 +41,7 @@ const OrdersTab = ({ userId }: { userId: string }) => {
                 <ProductImage
                   slug={item.productId ?? item.id}
                   images={item.productImages ?? undefined}
+                  alt={item.productName ?? "Unknown product"}
                   className="h-12 w-12 shrink-0 object-cover"
                 />
                 <span className="text-sm text-neutral-200">

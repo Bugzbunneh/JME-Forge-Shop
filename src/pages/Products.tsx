@@ -2,8 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../api/products";
 import ProductImage from "../components/ProductImage";
+import { useSeo } from "../hooks/useSeo";
+import { productsMeta } from "../seo/seo";
 
 const Products = () => {
+  useSeo(productsMeta);
+
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts,
@@ -12,8 +16,12 @@ const Products = () => {
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="text-center text-3xl font-light tracking-tight text-white">
-        Products from the forge
+        Handmade Knives, Swords &amp; Karambits
       </h1>
+      <p className="mx-auto mt-4 max-w-2xl text-center text-neutral-400">
+        Every knife, sword, and karambit below is fully custom and hand-forged to order by Josh
+        Ellison in Chorley, Lancashire — from everyday kitchen knives to one-of-a-kind pieces.
+      </p>
 
       {isLoading ? (
         <p className="mt-16 text-center text-neutral-500">Loading…</p>
@@ -25,6 +33,7 @@ const Products = () => {
                 <ProductImage
                   slug={product.slug}
                   images={product.images}
+                  alt={`${product.name} — handmade knife by JME Forge Shop`}
                   className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 {product.soldOut && (

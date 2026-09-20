@@ -4,9 +4,10 @@ import PlaceholderImage from "./PlaceholderImage";
 interface ProductGalleryProps {
   slug: string;
   images?: string[];
+  alt: string;
 }
 
-const ProductGallery = ({ slug, images }: ProductGalleryProps) => {
+const ProductGallery = ({ slug, images, alt }: ProductGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const hasImages = images !== undefined && images.length > 0;
@@ -20,7 +21,7 @@ const ProductGallery = ({ slug, images }: ProductGalleryProps) => {
     <div>
       <div className="relative bg-neutral-800">
         {activeImage ? (
-          <img src={activeImage} alt="" className="aspect-square w-full object-cover" />
+          <img src={activeImage} alt={alt} className="aspect-square w-full object-cover" />
         ) : (
           <PlaceholderImage seed={slug} className="aspect-square w-full object-cover" />
         )}
@@ -63,7 +64,11 @@ const ProductGallery = ({ slug, images }: ProductGalleryProps) => {
                 index === activeIndex ? "border-white" : "border-neutral-700"
               }`}
             >
-              <img src={image} alt="" className="h-full w-full object-cover" />
+              <img
+                src={image}
+                alt={`${alt} — view ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
             </button>
           ))}
         </div>

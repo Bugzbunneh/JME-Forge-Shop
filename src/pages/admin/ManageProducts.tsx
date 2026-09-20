@@ -59,6 +59,7 @@ const ManageProducts = () => {
                   <ProductImage
                     slug={product.slug}
                     images={product.images}
+                    alt={product.name}
                     className="h-12 w-12 object-cover"
                   />
                 </td>
