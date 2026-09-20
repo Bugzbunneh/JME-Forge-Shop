@@ -1,15 +1,31 @@
 import { Link } from "react-router-dom";
 import PlaceholderImage from "../components/PlaceholderImage";
+import { useSeo } from "../hooks/useSeo";
+import { homeMeta, localBusinessJsonLd } from "../seo/seo";
 
 const Home = () => {
+  useSeo(homeMeta);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
+
       <section className="mx-auto max-w-3xl px-6 py-16 text-center">
         <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl">Home</h1>
+        <p className="mt-4 text-sm tracking-widest text-neutral-400 uppercase">
+          Handmade custom knives, kitchen knives, swords &amp; karambits — Chorley, Lancashire
+        </p>
         <p className="mt-8 text-lg leading-relaxed text-neutral-300">
           I fell in love with the craft of blacksmithing at age 11. Since then I have done
-          everything I can to follow that passion — from a home workshop to forging full time. I
-          post weekly videos from the shop covering builds, experiments, and the odd disaster.
+          everything I can to follow that passion — from a home workshop in Chorley, Lancashire,
+          to forging full time. I hand-forge fully custom knives, from everyday kitchen knives to
+          swords and niche designs like karambits, each one made from scratch and finished by
+          hand. I post weekly videos from the shop covering builds, experiments, and the odd
+          disaster.
         </p>
         <Link
           to="/products"

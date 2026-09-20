@@ -128,6 +128,37 @@ Update `SITE_URL` (and redeploy `create-checkout-session`) once there's a real p
 domain, so Stripe redirects customers back to the live site instead of localhost. Switching
 from test mode to live mode later just means repeating steps 2–6 with live keys.
 
+## SEO & pre-rendering
+
+This is a client-rendered React SPA, which is a weak foundation for search visibility on its
+own — search engines have to execute JavaScript to see per-page content, and things like
+Facebook/WhatsApp link previews often don't execute JS at all. To fix this, `pnpm run build`
+runs a pre-rendering step (`scripts/prerender.mjs`) after the normal Vite build that:
+
+- Renders the Home page, the Products listing, and every individual product page to real
+  static HTML (via `src/entry-server.tsx`, using React's `renderToString` and React Query's
+  `dehydrate`/`hydrate` so the client picks up the same data without a "Loading…" flash),
+  each with the correct `<title>`, meta description, canonical URL, Open Graph tags, and
+  JSON-LD structured data (`LocalBusiness` on Home, `Product` on each product page).
+- Generates `dist/sitemap.xml` and `dist/robots.txt` from the same product data (the latter
+  disallows `/admin/`, `/addproduct`, `/account`, and `/login`, since those are private and
+  have no SEO value).
+- Writes a generic `dist/app-shell.html` for those private routes to fall back to, so a fresh
+  visit to e.g. `/account` doesn't hydrate on top of the Home page's prerendered markup. Which
+  URL maps to which file is handled by `public/_redirects` — Cloudflare Pages and Netlify both
+  read this format natively; a different host will need the equivalent rewrite rules
+  translated from that file.
+
+**Before deploying**, set `VITE_SITE_URL` in `.env` to the real production domain (used for
+canonical URLs, Open Graph URLs, and the sitemap) — it defaults to `http://localhost:5173`.
+
+On-page copy targets realistic search terms: broad national terms like "kitchen knives" are
+extremely competitive and unlikely to rank for a new small site regardless of technical SEO;
+the actual strategy here is long-tail + local ("custom kitchen knife Lancashire", "handmade
+knife maker Chorley") plus the lower-competition niches (karambits, custom swords). Setting up
+a free Google Business Profile for the Chorley area is likely to matter at least as much as
+anything on the site itself for local search visibility, and isn't something code can do.
+
 ## Before going live
 
 - **Set up a real email provider.** Supabase's default built-in SMTP (used for account

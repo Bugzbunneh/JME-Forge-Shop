@@ -1,6 +1,5 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/AdminLayout";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
@@ -16,8 +15,6 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Products from "./pages/Products";
 import { useAuthStore } from "./stores/useAuthStore";
-
-const queryClient = new QueryClient();
 
 const App = () => {
   const setSession = useAuthStore((state) => state.setSession);
@@ -35,29 +32,25 @@ const App = () => {
   }, [setSession]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:slug" element={<ProductDetail />} />
-            <Route path="/login" element={<Auth />} />
-            <Route element={<RequireAuth />}>
-              <Route path="/account" element={<Account />} />
-            </Route>
-            <Route element={<RequireSuperUser />}>
-              <Route path="/addproduct" element={<AddProduct />} />
-              <Route element={<AdminLayout />}>
-                <Route path="/admin/orders" element={<AllOrders />} />
-                <Route path="/admin/products" element={<ManageProducts />} />
-                <Route path="/admin/products/:id/edit" element={<EditProduct />} />
-              </Route>
-            </Route>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:slug" element={<ProductDetail />} />
+        <Route path="/login" element={<Auth />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/account" element={<Account />} />
+        </Route>
+        <Route element={<RequireSuperUser />}>
+          <Route path="/addproduct" element={<AddProduct />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin/orders" element={<AllOrders />} />
+            <Route path="/admin/products" element={<ManageProducts />} />
+            <Route path="/admin/products/:id/edit" element={<EditProduct />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+        </Route>
+      </Route>
+    </Routes>
   );
 };
 
