@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllOrders } from "../../api/orders";
+import ProductImage from "../../components/ProductImage";
 
 const AllOrders = () => {
   const { data: orders, isLoading } = useQuery({
@@ -22,7 +23,7 @@ const AllOrders = () => {
               <th className="py-3 pr-4 font-normal">Order</th>
               <th className="py-3 pr-4 font-normal">Customer</th>
               <th className="py-3 pr-4 font-normal">Status</th>
-              <th className="py-3 pr-4 font-normal">Items</th>
+              <th className="py-3 pr-4 font-normal">Products</th>
               <th className="py-3 pr-4 font-normal">Total</th>
               <th className="py-3 pr-4 font-normal">Date</th>
             </tr>
@@ -33,7 +34,20 @@ const AllOrders = () => {
                 <td className="py-3 pr-4">{order.id.slice(0, 8)}</td>
                 <td className="py-3 pr-4">{order.userId.slice(0, 8)}</td>
                 <td className="py-3 pr-4 capitalize">{order.status}</td>
-                <td className="py-3 pr-4">{order.items.length}</td>
+                <td className="py-3 pr-4">
+                  <ul className="space-y-2">
+                    {order.items.map((item) => (
+                      <li key={item.id} className="flex items-center gap-2">
+                        <ProductImage
+                          slug={item.productId ?? item.id}
+                          images={item.productImages ?? undefined}
+                          className="h-10 w-10 shrink-0 object-cover"
+                        />
+                        <span>{item.productName ?? "Unknown product"}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </td>
                 <td className="py-3 pr-4">£{order.total.toFixed(2)}</td>
                 <td className="py-3 pr-4">{new Date(order.createdAt).toLocaleDateString()}</td>
               </tr>
