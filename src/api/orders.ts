@@ -3,6 +3,8 @@ import { supabase } from "../lib/supabaseClient";
 export interface OrderItem {
   id: string;
   productId: string | null;
+  productName: string | null;
+  productImages: string[] | null;
   quantity: number;
   unitPrice: number;
 }
@@ -21,6 +23,10 @@ interface OrderItemRow {
   product_id: string | null;
   quantity: number;
   unit_price: number;
+  products: {
+    name: string;
+    images: string[];
+  } | null;
 }
 
 interface OrderRow {
@@ -36,6 +42,8 @@ const fromItemRow = (row: OrderItemRow): OrderItem => {
   const item: OrderItem = {
     id: row.id,
     productId: row.product_id,
+    productName: row.products?.name ?? null,
+    productImages: row.products?.images ?? null,
     quantity: row.quantity,
     unitPrice: row.unit_price,
   };
@@ -56,7 +64,7 @@ const fromOrderRow = (row: OrderRow): Order => {
 };
 
 const orderSelectColumns =
-  "id, status, total, created_at, user_id, order_items(id, product_id, quantity, unit_price)";
+  "id, status, total, created_at, user_id, order_items(id, product_id, quantity, unit_price, products(name, images))";
 
 export const fetchOrders = async (userId: string): Promise<Order[]> => {
   const { data, error } = await supabase
@@ -67,7 +75,7 @@ export const fetchOrders = async (userId: string): Promise<Order[]> => {
 
   if (error) throw error;
 
-  const orderRows = data as OrderRow[];
+  const orderRows = data as unknown as OrderRow[];
   const orders = orderRows.map(fromOrderRow);
   return orders;
 };
@@ -80,7 +88,7 @@ export const fetchAllOrders = async (): Promise<Order[]> => {
 
   if (error) throw error;
 
-  const orderRows = data as OrderRow[];
+  const orderRows = data as unknown as OrderRow[];
   const orders = orderRows.map(fromOrderRow);
   return orders;
 };

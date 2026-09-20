@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchOrders } from "../api/orders";
 import { fetchProfile, updateProfile } from "../api/profile";
 import { supabase } from "../lib/supabaseClient";
 import { useAuthStore } from "../stores/useAuthStore";
+import ProductImage from "../components/ProductImage";
 
 type Tab = "orders" | "personal";
 
@@ -33,7 +34,23 @@ const OrdersTab = ({ userId }: { userId: string }) => {
           <p className="mt-1 text-xs text-neutral-500">
             {new Date(order.createdAt).toLocaleDateString()}
           </p>
-          <p className="mt-2 text-sm text-neutral-300">
+
+          <ul className="mt-3 space-y-2">
+            {order.items.map((item) => (
+              <li key={item.id} className="flex items-center gap-3">
+                <ProductImage
+                  slug={item.productId ?? item.id}
+                  images={item.productImages ?? undefined}
+                  className="h-12 w-12 shrink-0 object-cover"
+                />
+                <span className="text-sm text-neutral-200">
+                  {item.productName ?? "Unknown product"}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-3 text-sm text-neutral-300">
             {order.items.length} item{order.items.length === 1 ? "" : "s"} — £
             {order.total.toFixed(2)}
           </p>
@@ -133,6 +150,8 @@ const Account = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const [tab, setTab] = useState<Tab>("orders");
+  const [searchParams] = useSearchParams();
+  const checkoutSucceeded = searchParams.get("checkout") === "success";
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -155,6 +174,12 @@ const Account = () => {
           Sign out
         </button>
       </div>
+
+      {checkoutSucceeded && (
+        <p className="mt-6 border border-neutral-700 bg-neutral-800 px-4 py-3 text-sm text-neutral-200">
+          Thanks for your order! It'll show up below shortly.
+        </p>
+      )}
 
       <div className="mt-8 flex gap-8 border-b border-neutral-700">
         <button
