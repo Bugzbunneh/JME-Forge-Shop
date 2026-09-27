@@ -6,8 +6,8 @@ const Footer = () => {
           Every piece is forged and photographed by hand — expect the occasional wait between drops.
         </p>
         <p className="mt-2">
-          &copy; {new Date().getFullYear()} Josh Ellison, JME Forge Shop — Chorley, Lancashire,
-          UK. All rights reserved.
+          &copy; {new Date().getFullYear()} Josh Ellison, JME Forge Shop — Chorley, Lancashire, UK.
+          All rights reserved.
         </p>
       </div>
     </footer>
