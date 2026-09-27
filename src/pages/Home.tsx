@@ -20,11 +20,13 @@ const Home = () => {
           Handmade custom knives, kitchen knives, swords &amp; karambits — Chorley, Lancashire
         </p>
         <p className="mt-8 text-lg leading-relaxed text-neutral-300">
-          I fell in love with the craft of blacksmithing at age 11. Since then I have done
-          everything I can to follow that passion — from a home workshop in Chorley, Lancashire, to
-          forging full time. I hand-forge fully custom knives, from everyday kitchen knives to
-          swords and niche designs like karambits, each one made from scratch and finished by hand.
-          I post weekly videos from the shop covering builds, experiments, and the odd disaster.
+          My name is Josh and I am a blacksmith and metalworker. I started in lockdown as something
+          to do!
+        </p>
+        <p className="mt-4 text-lg leading-relaxed text-neutral-300">
+          All my knives are hand forged as my hobby. I take custom orders so feel free to drop me an
+          email if you can&rsquo;t find the style you are looking for and I am more than happy to
+          accommodate your needs.
         </p>
         <Link
           to="/products"
@@ -47,6 +49,26 @@ const Home = () => {
             Fresh off the anvil — every piece is one of a kind.
           </figcaption>
         </figure>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-20 text-center">
+        <h2 className="text-3xl font-light tracking-tight text-white sm:text-4xl">
+          Built from the ground up!
+        </h2>
+        <p className="mt-8 text-lg leading-relaxed text-neutral-300">
+          Built by hand and fueled by passion — I craft each knife using 80CrV2 high-carbon steel,
+          known for its incredible edge retention and durability. Every hammer strike, grind, and
+          polish brings you a blade that&rsquo;s as sharp as it is unique.
+        </p>
+        <p className="mt-4 text-lg leading-relaxed text-neutral-300">
+          Whether you&rsquo;re a chef seeking a perfectly balanced Santoku or Chef&rsquo;s knife or
+          a collector drawn to San Mai craftsmanship, each piece is forged to perform and built to
+          last.
+        </p>
+        <p className="mt-4 text-lg leading-relaxed text-neutral-300">
+          No mass production — just authentic, hand forged knives designed for those who value
+          craftsmanship, power, and a razor-sharp edge.
+        </p>
       </section>
     </>
   );
