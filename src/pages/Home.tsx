@@ -21,11 +21,10 @@ const Home = () => {
         </p>
         <p className="mt-8 text-lg leading-relaxed text-neutral-300">
           I fell in love with the craft of blacksmithing at age 11. Since then I have done
-          everything I can to follow that passion — from a home workshop in Chorley, Lancashire,
-          to forging full time. I hand-forge fully custom knives, from everyday kitchen knives to
-          swords and niche designs like karambits, each one made from scratch and finished by
-          hand. I post weekly videos from the shop covering builds, experiments, and the odd
-          disaster.
+          everything I can to follow that passion — from a home workshop in Chorley, Lancashire, to
+          forging full time. I hand-forge fully custom knives, from everyday kitchen knives to
+          swords and niche designs like karambits, each one made from scratch and finished by hand.
+          I post weekly videos from the shop covering builds, experiments, and the odd disaster.
         </p>
         <Link
           to="/products"
