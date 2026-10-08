@@ -13,7 +13,9 @@ const siteUrl = (env.VITE_SITE_URL || "http://localhost:5173").replace(/\/$/, ""
 const escapeHtml = (value) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const buildHead = ({ title, description, canonicalPath, imageUrl }) => {
+const defaultShareImageUrl = `${siteUrl}/images/logo.png`;
+
+const buildHead = ({ title, description, canonicalPath, imageUrl = defaultShareImageUrl }) => {
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
   const tags = [
     `<title>${escapeHtml(title)}</title>`,

@@ -33,14 +33,12 @@ const NavBar = () => {
           </NavLink>
         </nav>
 
-        <NavLink
-          to="/"
-          className="text-base font-light tracking-[0.15em] whitespace-nowrap text-white uppercase sm:justify-self-center sm:text-2xl sm:tracking-[0.3em]"
-        >
-          Josh Ellison
+        <NavLink to="/" aria-label="J.M.E Forge home" className="sm:justify-self-center">
+          <img src="/images/logo.png" alt="J.M.E Forge logo" className="h-12 w-auto sm:h-16" />
         </NavLink>
 
         <div className="flex items-center gap-4 sm:gap-5 sm:justify-self-end">
+          <AccountNavLink />
           <a
             href="https://www.instagram.com/jme_forge"
             target="_blank"
@@ -49,7 +47,6 @@ const NavBar = () => {
           >
             <InstagramIcon className="h-6 w-6 sm:h-7 sm:w-7" />
           </a>
-          <AccountNavLink />
         </div>
       </div>
 
