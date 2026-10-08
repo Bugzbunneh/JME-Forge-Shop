@@ -5,11 +5,20 @@ interface ProductImageProps {
   images?: string[];
   alt: string;
   className?: string;
+  eager?: boolean;
 }
 
-const ProductImage = ({ slug, images, alt, className }: ProductImageProps) => {
+const ProductImage = ({ slug, images, alt, className, eager = false }: ProductImageProps) => {
   if (images && images.length > 0) {
-    return <img src={images[0]} alt={alt} className={className} />;
+    return (
+      <img
+        src={images[0]}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        className={className}
+      />
+    );
   }
 
   return <PlaceholderImage seed={slug} className={className} />;

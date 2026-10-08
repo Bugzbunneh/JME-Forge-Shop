@@ -12,12 +12,19 @@ import EditProduct from "./pages/admin/EditProduct";
 import ManageProducts from "./pages/admin/ManageProducts";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import Products from "./pages/Products";
+import Saved from "./pages/Saved";
 import { useAuthStore } from "./stores/useAuthStore";
+import { useSavedStore } from "./stores/useSavedStore";
 
 const App = () => {
   const setSession = useAuthStore((state) => state.setSession);
+
+  useEffect(() => {
+    useSavedStore.persist.rehydrate();
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -37,6 +44,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:slug" element={<ProductDetail />} />
+        <Route path="/saved" element={<Saved />} />
         <Route path="/login" element={<Auth />} />
         <Route element={<RequireAuth />}>
           <Route path="/account" element={<Account />} />
@@ -49,6 +57,7 @@ const App = () => {
             <Route path="/admin/products/:id/edit" element={<EditProduct />} />
           </Route>
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

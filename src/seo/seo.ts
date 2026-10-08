@@ -1,6 +1,7 @@
+import { siteConfig } from "../config/site";
 import type { Product } from "../types/product";
 
-export const siteName = "JME Forge Shop";
+export const siteName = siteConfig.name;
 
 export const homeMeta = {
   title: "JME Forge Shop | Handmade Custom Knives & Swords, Chorley, Lancashire",
@@ -31,7 +32,7 @@ export const localBusinessJsonLd = {
     addressCountry: "GB",
   },
   areaServed: "North West England",
-  sameAs: ["https://www.instagram.com/jme_forge"],
+  sameAs: [siteConfig.instagramUrl],
 };
 
 export const getProductJsonLd = (product: Product) => ({

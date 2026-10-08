@@ -69,7 +69,7 @@ const EditProductForm = ({ product }: { product: Product }) => {
   return (
     <form onSubmit={handleSubmit} className="mt-10 max-w-xl space-y-6">
       <div>
-        <label htmlFor="name" className="block text-xs uppercase tracking-widest text-neutral-400">
+        <label htmlFor="name" className="label">
           Title
         </label>
         <input
@@ -77,12 +77,12 @@ const EditProductForm = ({ product }: { product: Product }) => {
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
+          className="input mt-2"
         />
       </div>
 
       <div>
-        <label htmlFor="price" className="block text-xs uppercase tracking-widest text-neutral-400">
+        <label htmlFor="price" className="label">
           Price (£)
         </label>
         <input
@@ -92,15 +92,12 @@ const EditProductForm = ({ product }: { product: Product }) => {
           step="0.01"
           value={price}
           onChange={(event) => setPrice(event.target.value)}
-          className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
+          className="input mt-2"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="description"
-          className="block text-xs uppercase tracking-widest text-neutral-400"
-        >
+        <label htmlFor="description" className="label">
           Description
         </label>
         <textarea
@@ -108,28 +105,23 @@ const EditProductForm = ({ product }: { product: Product }) => {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={4}
-          className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
+          className="input mt-2"
         />
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-neutral-400">
-          Current images
-        </label>
+        <label className="label">Current images</label>
         {existingImages.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-3">
             {existingImages.map((image) => (
-              <img key={image} src={image} alt="" className="h-24 w-24 object-cover" />
+              <img key={image} src={image} alt="" className="h-24 w-24 rounded-xs object-cover" />
             ))}
           </div>
         ) : (
-          <p className="mt-2 text-xs text-neutral-500">No images uploaded — using placeholder.</p>
+          <p className="mt-2 text-xs text-subtle">No images uploaded — using placeholder.</p>
         )}
 
-        <label
-          htmlFor="images"
-          className="mt-4 block text-xs uppercase tracking-widest text-neutral-400"
-        >
+        <label htmlFor="images" className="mt-4 label">
           Replace images
         </label>
         <input
@@ -138,18 +130,18 @@ const EditProductForm = ({ product }: { product: Product }) => {
           accept="image/*"
           multiple
           onChange={handleImageChange}
-          className="mt-2 w-full text-sm text-neutral-400 file:mr-4 file:border file:border-neutral-700 file:bg-neutral-800 file:px-4 file:py-2 file:text-white"
+          className="mt-2 w-full text-sm text-muted file:mr-4 file:cursor-pointer file:rounded-xs file:border file:border-line file:bg-raised file:px-4 file:py-2 file:text-fg"
         />
         {previewUrls.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-3">
             {previewUrls.map((src, index) => (
               <div key={src} className="relative">
-                <img src={src} alt="" className="h-24 w-24 object-cover" />
+                <img src={src} alt="" className="h-24 w-24 rounded-xs object-cover" />
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(index)}
                   aria-label="Remove image"
-                  className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center bg-neutral-900 text-white hover:bg-red-500"
+                  className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-raised text-fg hover:bg-red-500"
                 >
                   ×
                 </button>
@@ -157,33 +149,27 @@ const EditProductForm = ({ product }: { product: Product }) => {
             ))}
           </div>
         )}
-        <p className="mt-2 text-xs text-neutral-500">
+        <p className="mt-2 text-xs text-subtle">
           Choosing new images replaces all existing ones for this product.
         </p>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-neutral-300">
+      <label className="flex items-center gap-3 text-sm text-muted">
         <input
           type="checkbox"
           checked={soldOut}
           onChange={(event) => setSoldOut(event.target.checked)}
-          className="h-4 w-4"
+          className="h-4 w-4 accent-ember"
         />
         Sold out
       </label>
 
-      {formError && <p className="text-sm text-red-400">{formError}</p>}
+      {formError && <p className="alert-error">{formError}</p>}
       {mutation.isError && (
-        <p className="text-sm text-red-400">
-          Something went wrong saving this product. Please try again.
-        </p>
+        <p className="alert-error">Something went wrong saving this product. Please try again.</p>
       )}
 
-      <button
-        type="submit"
-        disabled={mutation.isPending}
-        className="border border-white px-6 py-2 text-sm uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <button type="submit" disabled={mutation.isPending} className="btn btn-primary">
         {mutation.isPending ? "Saving…" : "Save changes"}
       </button>
     </form>
@@ -200,7 +186,7 @@ const EditProduct = () => {
   });
 
   if (isLoading) {
-    return <p className="text-neutral-500">Loading…</p>;
+    return <p className="text-subtle">Loading…</p>;
   }
 
   if (!product) {
@@ -209,7 +195,7 @@ const EditProduct = () => {
 
   return (
     <section>
-      <h1 className="text-2xl font-light tracking-tight text-white">Edit product</h1>
+      <h1 className="font-display text-4xl font-medium text-fg">Edit product</h1>
       <EditProductForm product={product} />
     </section>
   );

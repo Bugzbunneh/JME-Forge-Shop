@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { deleteProduct, fetchProducts } from "../../api/products";
 import ProductImage from "../../components/ProductImage";
+import { formatPrice } from "../../utils/formatPrice";
 
 const ManageProducts = () => {
   const queryClient = useQueryClient();
@@ -27,73 +28,84 @@ const ManageProducts = () => {
 
   return (
     <section>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-light tracking-tight text-white">Manage products</h1>
-        <Link
-          to="/addproduct"
-          className="border border-white px-4 py-2 text-xs uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900"
-        >
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-display text-4xl font-medium text-fg">Manage products</h1>
+        <Link to="/addproduct" className="btn btn-primary">
           Add product
         </Link>
       </div>
 
       {isLoading ? (
-        <p className="mt-8 text-neutral-500">Loading…</p>
+        <div className="mt-8 space-y-3" aria-hidden>
+          <div className="skeleton h-16 w-full" />
+          <div className="skeleton h-16 w-full" />
+          <div className="skeleton h-16 w-full" />
+        </div>
       ) : !products || products.length === 0 ? (
-        <p className="mt-8 text-neutral-400">No products yet.</p>
+        <p className="mt-8 text-muted">No products yet.</p>
       ) : (
-        <table className="mt-8 w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-neutral-700 text-xs tracking-widest text-neutral-500 uppercase">
-              <th className="py-3 pr-4 font-normal">Image</th>
-              <th className="py-3 pr-4 font-normal">Name</th>
-              <th className="py-3 pr-4 font-normal">Price</th>
-              <th className="py-3 pr-4 font-normal">Status</th>
-              <th className="py-3 pr-4 font-normal">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-b border-neutral-800 text-neutral-300">
-                <td className="py-3 pr-4">
-                  <ProductImage
-                    slug={product.slug}
-                    images={product.images}
-                    alt={product.name}
-                    className="h-12 w-12 object-cover"
-                  />
-                </td>
-                <td className="py-3 pr-4">{product.name}</td>
-                <td className="py-3 pr-4">£{product.price.toFixed(2)}</td>
-                <td className="py-3 pr-4">{product.soldOut ? "Sold out" : "In stock"}</td>
-                <td className="py-3 pr-4">
-                  <div className="flex gap-4">
-                    <Link
-                      to={`/admin/products/${product.id}/edit`}
-                      className="text-neutral-400 underline hover:text-white"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(product.id, product.name)}
-                      disabled={deleteMutation.isPending}
-                      className="text-neutral-400 underline hover:text-white disabled:opacity-50"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
+        <div className="card mt-8 overflow-x-auto px-5 py-2">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id}>
+                  <td>
+                    <ProductImage
+                      slug={product.slug}
+                      images={product.images}
+                      alt={product.name}
+                      className="h-12 w-12 rounded-xs object-cover"
+                    />
+                  </td>
+                  <td className="font-medium text-fg">{product.name}</td>
+                  <td>{formatPrice(product.price)}</td>
+                  <td>
+                    <span
+                      className={`rounded-full border px-3 py-1 text-[0.62rem] font-semibold tracking-[0.2em] uppercase ${
+                        product.soldOut
+                          ? "border-line text-subtle"
+                          : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                      }`}
+                    >
+                      {product.soldOut ? "Sold out" : "In stock"}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="flex gap-4">
+                      <Link
+                        to={`/admin/products/${product.id}/edit`}
+                        className="link-underline text-fg"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(product.id, product.name)}
+                        disabled={deleteMutation.isPending}
+                        className="link-underline hover:text-red-300 disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {deleteMutation.isError && (
-        <p className="mt-4 text-sm text-red-400">
-          Could not delete that product. Please try again.
-        </p>
+        <p className="alert-error mt-4">Could not delete that product. Please try again.</p>
       )}
     </section>
   );

@@ -131,6 +131,7 @@ const main = async () => {
     "Disallow: /admin/",
     "Disallow: /addproduct",
     "Disallow: /account",
+    "Disallow: /saved",
     "Disallow: /login",
     "",
     `Sitemap: ${siteUrl}/sitemap.xml`,

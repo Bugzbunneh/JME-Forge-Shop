@@ -3,6 +3,7 @@ import { useEffect } from "react";
 interface SeoOptions {
   title: string;
   description: string;
+  noindex?: boolean;
 }
 
 const setMetaTag = (name: string, content: string) => {
@@ -15,9 +16,18 @@ const setMetaTag = (name: string, content: string) => {
   tag.setAttribute("content", content);
 };
 
-export const useSeo = ({ title, description }: SeoOptions) => {
+export const useSeo = ({ title, description, noindex = false }: SeoOptions) => {
   useEffect(() => {
     document.title = title;
     setMetaTag("description", description);
   }, [title, description]);
+
+  useEffect(() => {
+    if (!noindex) return;
+
+    setMetaTag("robots", "noindex");
+    return () => {
+      document.querySelector('meta[name="robots"]')?.remove();
+    };
+  }, [noindex]);
 };

@@ -1,1 +1,190 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+
+  --color-canvas: #0d0c0b;
+  --color-surface: #151311;
+  --color-raised: #1d1a17;
+  --color-line: #2b2723;
+  --color-fg: #f4f0ea;
+  --color-muted: #a8a095;
+  --color-subtle: #8a8279;
+  --color-ember: #e8893a;
+  --color-ember-strong: #f4a059;
+  --color-ember-deep: #b8561b;
+
+  --animate-fade-in: fade-in 0.45s ease-out both;
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-toast-in: toast-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .font-display {
+    font-variant-numeric: lining-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-ember);
+    color: var(--color-canvas);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 3px;
+  }
+
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .eyebrow {
+    @apply text-[0.7rem] font-semibold tracking-[0.3em] text-ember uppercase;
+  }
+
+  .section-title {
+    @apply text-balance font-display text-4xl leading-[1.05] font-medium tracking-tight text-fg sm:text-5xl;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-xs px-7 py-3.5 text-[0.7rem] font-semibold tracking-[0.2em] whitespace-nowrap uppercase transition duration-200 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-ember text-canvas hover:bg-ember-strong active:scale-[0.99];
+  }
+
+  .btn-outline {
+    @apply border border-fg/25 text-fg hover:border-fg hover:bg-fg hover:text-canvas active:scale-[0.99];
+  }
+
+  .input {
+    @apply w-full rounded-xs border border-line bg-surface px-4 py-3 text-sm text-fg transition-colors placeholder:text-subtle hover:border-subtle focus:border-ember focus:outline-none;
+  }
+
+  .label {
+    @apply block text-[0.7rem] font-medium tracking-[0.2em] text-muted uppercase;
+  }
+
+  .card {
+    @apply rounded-xs border border-line bg-surface;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-xs bg-raised;
+  }
+
+  .alert-error {
+    @apply rounded-xs border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300;
+  }
+
+  .alert-info {
+    @apply rounded-xs border border-ember/30 bg-ember/10 px-4 py-3 text-sm text-ember-strong;
+  }
+
+  .admin-table {
+    @apply w-full min-w-[36rem] border-collapse text-left text-sm;
+  }
+
+  .admin-table th {
+    @apply border-b border-line py-3 pr-4 text-[0.7rem] font-medium tracking-[0.2em] text-subtle uppercase;
+  }
+
+  .admin-table td {
+    @apply border-b border-line/60 py-3 pr-4 align-middle text-muted;
+  }
+
+  .link-underline {
+    @apply underline decoration-line underline-offset-4 transition-colors hover:text-fg hover:decoration-ember;
+  }
+
+  .reveal {
+    animation: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 25%;
+    }
+  }
+}

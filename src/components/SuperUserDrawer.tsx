@@ -1,20 +1,28 @@
 import { NavLink } from "react-router-dom";
 
 const drawerLinkClasses = ({ isActive }: { isActive: boolean }) =>
-  `block px-4 py-3 text-xs uppercase tracking-widest transition-colors ${
-    isActive ? "bg-neutral-800 text-white" : "text-neutral-400 hover:text-white"
+  `block border-l-2 px-5 py-3 text-[0.7rem] font-medium tracking-[0.2em] uppercase transition-colors ${
+    isActive
+      ? "border-ember bg-raised text-fg"
+      : "border-transparent text-muted hover:bg-raised/60 hover:text-fg"
   }`;
 
 const SuperUserDrawer = () => {
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 w-56 border-r border-neutral-700 bg-neutral-900">
-      <p className="px-4 py-6 text-xs tracking-widest text-neutral-500 uppercase">Admin</p>
-      <nav>
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-56 border-r border-line bg-surface md:block">
+      <p className="flex items-center gap-2 px-5 py-6 text-[0.7rem] font-semibold tracking-[0.3em] text-ember uppercase">
+        <span className="h-1.5 w-1.5 rounded-full bg-ember" />
+        Admin
+      </p>
+      <nav aria-label="Admin">
         <NavLink to="/admin/orders" className={drawerLinkClasses}>
           All orders
         </NavLink>
         <NavLink to="/admin/products" className={drawerLinkClasses}>
           Manage products
+        </NavLink>
+        <NavLink to="/addproduct" className={drawerLinkClasses}>
+          Add product
         </NavLink>
       </nav>
     </aside>
