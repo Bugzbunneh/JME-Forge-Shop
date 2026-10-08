@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import PlaceholderImage from "../components/PlaceholderImage";
 import { useSeo } from "../hooks/useSeo";
 import { homeMeta, localBusinessJsonLd } from "../seo/seo";
 
@@ -17,7 +16,7 @@ const Home = () => {
       <section className="mx-auto max-w-3xl px-6 py-16 text-center">
         <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl">Home</h1>
         <p className="mt-4 text-sm tracking-widest text-neutral-400 uppercase">
-          Handmade custom knives, kitchen knives, swords &amp; karambits — Chorley, Lancashire
+          Handmade custom knives, kitchen knives &amp; swords — Chorley, Lancashire
         </p>
         <p className="mt-8 text-lg leading-relaxed text-neutral-300">
           My name is Josh and I am a blacksmith and metalworker. I started in lockdown as something
@@ -37,18 +36,16 @@ const Home = () => {
       </section>
 
       <section className="mx-auto grid max-w-5xl gap-6 px-6 pb-20 sm:grid-cols-2">
-        <figure>
-          <PlaceholderImage seed="hero-1" className="aspect-square w-full object-cover" />
-          <figcaption className="mt-3 text-center text-sm text-neutral-400">
-            Titanium damascus axe with diffusion-bonded carbon steel cutting edge.
-          </figcaption>
-        </figure>
-        <figure>
-          <PlaceholderImage seed="hero-2" className="aspect-square w-full object-cover" />
-          <figcaption className="mt-3 text-center text-sm text-neutral-400">
-            Fresh off the anvil — every piece is one of a kind.
-          </figcaption>
-        </figure>
+        <img
+          src="/images/josh-at-anvil.jpg"
+          alt="Josh Ellison at the anvil in the J.M.E Forge workshop"
+          className="aspect-square w-full object-cover object-[50%_30%]"
+        />
+        <img
+          src="/images/forge-workshop.jpg"
+          alt="Inside the J.M.E Forge workshop with anvil, belt grinder and drill press"
+          className="aspect-square w-full object-cover"
+        />
       </section>
 
       <section className="mx-auto max-w-3xl px-6 pb-20 text-center">

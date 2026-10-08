@@ -5,7 +5,7 @@ export const siteName = "JME Forge Shop";
 export const homeMeta = {
   title: "JME Forge Shop | Handmade Custom Knives & Swords, Chorley, Lancashire",
   description:
-    "Hand-forged custom knives, kitchen knives, swords, and karambits made by Josh Ellison in Chorley, Lancashire. Every piece is one of a kind.",
+    "Hand-forged custom knives, kitchen knives, and swords made by Josh Ellison in Chorley, Lancashire. Every piece is one of a kind.",
 };
 
 export const productsMeta = {
