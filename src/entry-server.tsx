@@ -15,11 +15,13 @@ export interface RenderResult {
 export const renderPage = async (url: string): Promise<RenderResult> => {
   const queryClient = new QueryClient();
 
-  if (url === "/products") {
+  const productMatch = url.match(PRODUCT_PATH_PATTERN);
+  const showsProductList = url === "/" || url === "/products" || productMatch !== null;
+
+  if (showsProductList) {
     await queryClient.prefetchQuery({ queryKey: ["products"], queryFn: fetchProducts });
   }
 
-  const productMatch = url.match(PRODUCT_PATH_PATTERN);
   if (productMatch) {
     const slug = productMatch[1];
     await queryClient.prefetchQuery({

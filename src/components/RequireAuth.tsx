@@ -6,7 +6,11 @@ const RequireAuth = () => {
   const initialized = useAuthStore((state) => state.initialized);
 
   if (!initialized) {
-    return <p className="mx-auto max-w-5xl px-6 py-16 text-center text-neutral-500">Loading…</p>;
+    return (
+      <p className="container-page py-24 text-center text-sm tracking-[0.2em] text-subtle uppercase">
+        Loading…
+      </p>
+    );
   }
 
   if (!user) {

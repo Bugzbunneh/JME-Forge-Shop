@@ -1,19 +1,35 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { EyeIcon } from "../components/icons";
+import { useSeo } from "../hooks/useSeo";
 import { supabase } from "../lib/supabaseClient";
 import { useAuthStore } from "../stores/useAuthStore";
 
 type Mode = "login" | "register";
 
+interface LocationState {
+  from?: string;
+}
+
 const Auth = () => {
+  useSeo({
+    title: "Log in or register | JME Forge Shop",
+    description: "Log in or create an account to buy from JME Forge Shop.",
+    noindex: true,
+  });
+
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore((state) => state.user);
+
+  const returnTo = (location.state as LocationState | null)?.from ?? "/account";
 
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
 
@@ -22,7 +38,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
     },
-    onSuccess: () => navigate("/account"),
+    onSuccess: () => navigate(returnTo),
   });
 
   const registerMutation = useMutation({
@@ -33,7 +49,7 @@ const Auth = () => {
     },
     onSuccess: (data) => {
       if (data.session) {
-        navigate("/account");
+        navigate(returnTo);
       } else {
         setConfirmationMessage("Check your email to confirm your account, then log in.");
         setMode("login");
@@ -42,10 +58,11 @@ const Auth = () => {
   });
 
   if (user) {
-    return <Navigate to="/account" replace />;
+    return <Navigate to={returnTo} replace />;
   }
 
   const activeMutation = mode === "login" ? loginMutation : registerMutation;
+  const isLogin = mode === "login";
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -82,108 +99,132 @@ const Auth = () => {
     setConfirmationMessage(null);
   };
 
+  const tabClasses = (tabMode: Mode) =>
+    `flex-1 rounded-xs py-3 text-[0.7rem] font-semibold tracking-[0.2em] uppercase transition-colors ${
+      mode === tabMode ? "bg-ember text-canvas" : "text-muted hover:text-fg"
+    }`;
+
   return (
-    <section className="mx-auto max-w-sm px-6 py-16">
-      <div className="mb-8 flex border border-neutral-700">
-        <button
-          type="button"
-          onClick={() => switchMode("login")}
-          className={`flex-1 py-3 text-xs uppercase tracking-widest transition-colors ${
-            mode === "login" ? "bg-white text-neutral-900" : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          Login
-        </button>
-        <button
-          type="button"
-          onClick={() => switchMode("register")}
-          className={`flex-1 py-3 text-xs uppercase tracking-widest transition-colors ${
-            mode === "register" ? "bg-white text-neutral-900" : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          Register
-        </button>
-      </div>
-
-      {confirmationMessage && (
-        <p className="mb-6 text-sm text-neutral-300">{confirmationMessage}</p>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-xs uppercase tracking-widest text-neutral-400"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
+    <section className="container-page flex justify-center py-16 sm:py-24">
+      <div className="w-full max-w-md">
+        <div className="text-center">
+          <img
+            src="/images/logo.png"
+            alt=""
+            width={321}
+            height={310}
+            className="mx-auto h-20 w-auto"
           />
-        </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-xs uppercase tracking-widest text-neutral-400"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete={mode === "login" ? "current-password" : "new-password"}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
-          />
-        </div>
-
-        {mode === "register" && (
-          <div>
-            <label
-              htmlFor="confirm-password"
-              className="block text-xs uppercase tracking-widest text-neutral-400"
-            >
-              Confirm password
-            </label>
-            <input
-              id="confirm-password"
-              type="password"
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
-            />
-          </div>
-        )}
-
-        {formError && <p className="text-sm text-red-400">{formError}</p>}
-        {activeMutation.isError && (
-          <p className="text-sm text-red-400">
-            {activeMutation.error instanceof Error
-              ? activeMutation.error.message
-              : "Something went wrong. Please try again."}
+          <h1 className="mt-6 font-display text-4xl font-medium text-fg">
+            {isLogin ? "Welcome back" : "Create your account"}
+          </h1>
+          <p className="mt-3 text-sm text-muted">
+            {isLogin
+              ? "Log in to buy from the forge and track your orders."
+              : "Register to buy from the forge and track your orders."}
           </p>
-        )}
+        </div>
 
-        <button
-          type="submit"
-          disabled={activeMutation.isPending}
-          className="w-full border border-white py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {activeMutation.isPending
-            ? "Please wait…"
-            : mode === "login"
-              ? "Log in"
-              : "Create account"}
-        </button>
-      </form>
+        <div className="card mt-10 p-6 sm:p-8">
+          <div className="flex rounded-xs border border-line p-0.5">
+            <button
+              type="button"
+              onClick={() => switchMode("login")}
+              className={tabClasses("login")}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => switchMode("register")}
+              className={tabClasses("register")}
+            >
+              Register
+            </button>
+          </div>
+
+          {confirmationMessage && <p className="alert-info mt-6">{confirmationMessage}</p>}
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
+            <div>
+              <label htmlFor="email" className="label">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="input mt-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="label">
+                Password
+              </label>
+              <div className="relative mt-2">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="input pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((shown) => !shown)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 p-1 text-subtle transition-colors hover:text-fg"
+                >
+                  <EyeIcon className="h-5 w-5" crossed={showPassword} />
+                </button>
+              </div>
+            </div>
+
+            {mode === "register" && (
+              <div>
+                <label htmlFor="confirm-password" className="label">
+                  Confirm password
+                </label>
+                <input
+                  id="confirm-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  className="input mt-2"
+                />
+              </div>
+            )}
+
+            {formError && <p className="alert-error">{formError}</p>}
+            {activeMutation.isError && (
+              <p className="alert-error">
+                {activeMutation.error instanceof Error
+                  ? activeMutation.error.message
+                  : "Something went wrong. Please try again."}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={activeMutation.isPending}
+              className="btn btn-primary w-full py-4"
+            >
+              {activeMutation.isPending ? "Please wait…" : isLogin ? "Log in" : "Create account"}
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-8 text-center text-sm text-muted">
+          <Link to="/products" className="link-underline">
+            Continue browsing
+          </Link>
+        </p>
+      </div>
     </section>
   );
 };

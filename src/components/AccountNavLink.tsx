@@ -7,7 +7,11 @@ const AccountNavLink = () => {
 
   if (user) {
     return (
-      <Link to="/account" aria-label="Your account" className="text-white">
+      <Link
+        to="/account"
+        aria-label="Your account"
+        className="text-fg transition-colors hover:text-ember"
+      >
         <UserIcon className="h-6 w-6" />
       </Link>
     );
@@ -16,10 +20,9 @@ const AccountNavLink = () => {
   return (
     <Link
       to="/login"
-      className="text-xs uppercase tracking-widest text-neutral-400 transition-colors hover:text-white"
+      className="text-[0.7rem] font-medium tracking-[0.2em] text-muted uppercase transition-colors hover:text-fg"
     >
-      <span className="sm:hidden">Login</span>
-      <span className="hidden sm:inline">Login / Register</span>
+      Login
     </Link>
   );
 };

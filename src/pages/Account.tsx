@@ -1,13 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { fetchOrders } from "../api/orders";
 import { fetchProfile, updateProfile } from "../api/profile";
+import { ArrowRightIcon, CheckIcon } from "../components/icons";
+import ProductImage from "../components/ProductImage";
+import { useSeo } from "../hooks/useSeo";
 import { supabase } from "../lib/supabaseClient";
 import { useAuthStore } from "../stores/useAuthStore";
-import ProductImage from "../components/ProductImage";
+import { formatPrice } from "../utils/formatPrice";
 
 type Tab = "orders" | "personal";
+
+const tabs: { value: Tab; label: string }[] = [
+  { value: "orders", label: "Orders" },
+  { value: "personal", label: "Personal information" },
+];
+
+const statusBadgeClasses = (status: string) =>
+  status === "paid"
+    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+    : "border-line text-muted";
 
 const OrdersTab = ({ userId }: { userId: string }) => {
   const { data: orders, isLoading } = useQuery({
@@ -16,47 +29,76 @@ const OrdersTab = ({ userId }: { userId: string }) => {
   });
 
   if (isLoading) {
-    return <p className="text-neutral-500">Loading…</p>;
+    return (
+      <div className="space-y-4" aria-hidden>
+        <div className="skeleton h-32 w-full" />
+        <div className="skeleton h-32 w-full" />
+      </div>
+    );
   }
 
   if (!orders || orders.length === 0) {
-    return <p className="text-neutral-400">You haven't placed any orders yet.</p>;
+    return (
+      <div className="rounded-xs border border-dashed border-line px-6 py-16 text-center">
+        <p className="font-display text-3xl font-medium text-fg">No orders yet</p>
+        <p className="mt-3 text-sm text-muted">
+          When you buy a piece from the forge, it will appear here.
+        </p>
+        <Link to="/products" className="btn btn-primary mt-8">
+          Browse the shop
+          <ArrowRightIcon className="h-4 w-4" />
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <ul className="space-y-6">
-      {orders.map((order) => (
-        <li key={order.id} className="border border-neutral-700 p-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-white">Order #{order.id.slice(0, 8)}</span>
-            <span className="text-neutral-400 capitalize">{order.status}</span>
-          </div>
-          <p className="mt-1 text-xs text-neutral-500">
-            {new Date(order.createdAt).toLocaleDateString()}
-          </p>
+    <ul className="space-y-5">
+      {orders.map((order) => {
+        const itemCountLabel = `${order.items.length} item${order.items.length === 1 ? "" : "s"}`;
+        const orderDate = new Date(order.createdAt).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
 
-          <ul className="mt-3 space-y-2">
-            {order.items.map((item) => (
-              <li key={item.id} className="flex items-center gap-3">
-                <ProductImage
-                  slug={item.productId ?? item.id}
-                  images={item.productImages ?? undefined}
-                  alt={item.productName ?? "Unknown product"}
-                  className="h-12 w-12 shrink-0 object-cover"
-                />
-                <span className="text-sm text-neutral-200">
-                  {item.productName ?? "Unknown product"}
-                </span>
-              </li>
-            ))}
-          </ul>
+        return (
+          <li key={order.id} className="card p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-fg">Order #{order.id.slice(0, 8)}</p>
+                <p className="mt-1 text-xs text-subtle">{orderDate}</p>
+              </div>
+              <span
+                className={`rounded-full border px-3 py-1 text-[0.62rem] font-semibold tracking-[0.2em] uppercase ${statusBadgeClasses(order.status)}`}
+              >
+                {order.status}
+              </span>
+            </div>
 
-          <p className="mt-3 text-sm text-neutral-300">
-            {order.items.length} item{order.items.length === 1 ? "" : "s"} — £
-            {order.total.toFixed(2)}
-          </p>
-        </li>
-      ))}
+            <ul className="mt-5 space-y-3 border-t border-line pt-5">
+              {order.items.map((item) => (
+                <li key={item.id} className="flex items-center gap-4">
+                  <ProductImage
+                    slug={item.productId ?? item.id}
+                    images={item.productImages ?? undefined}
+                    alt={item.productName ?? "Unknown product"}
+                    className="h-14 w-14 shrink-0 rounded-xs object-cover"
+                  />
+                  <span className="font-display text-xl font-medium text-fg">
+                    {item.productName ?? "Unknown product"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-5 flex justify-between border-t border-line pt-4 text-sm text-muted">
+              <span>{itemCountLabel}</span>
+              <span className="font-semibold text-fg">{formatPrice(order.total)}</span>
+            </p>
+          </li>
+        );
+      })}
     </ul>
   );
 };
@@ -68,7 +110,7 @@ const PersonalInfoTab = ({ userId, email }: { userId: string; email: string | un
   });
 
   if (isLoading) {
-    return <p className="text-neutral-500">Loading…</p>;
+    return <div className="skeleton h-40 w-full max-w-md" aria-hidden />;
   }
 
   return (
@@ -109,38 +151,32 @@ const PersonalInfoForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm space-y-6">
+    <form onSubmit={handleSubmit} className="card max-w-md space-y-6 p-6 sm:p-8">
       <div>
-        <label className="block text-xs uppercase tracking-widest text-neutral-400">Email</label>
-        <p className="mt-2 text-white">{email}</p>
+        <p className="label">Email</p>
+        <p className="mt-2 text-fg">{email}</p>
       </div>
 
       <div>
-        <label
-          htmlFor="full-name"
-          className="block text-xs uppercase tracking-widest text-neutral-400"
-        >
+        <label htmlFor="full-name" className="label">
           Full name
         </label>
         <input
           id="full-name"
           type="text"
+          autoComplete="name"
           value={fullName}
           onChange={(event) => setFullName(event.target.value)}
-          className="mt-2 w-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-white focus:border-white focus:outline-none"
+          className="input mt-2"
         />
       </div>
 
-      {savedMessage && <p className="text-sm text-neutral-300">{savedMessage}</p>}
+      {savedMessage && <p className="alert-info">{savedMessage}</p>}
       {saveMutation.isError && (
-        <p className="text-sm text-red-400">Could not save your changes. Please try again.</p>
+        <p className="alert-error">Could not save your changes. Please try again.</p>
       )}
 
-      <button
-        type="submit"
-        disabled={saveMutation.isPending}
-        className="border border-white px-6 py-2 text-sm uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <button type="submit" disabled={saveMutation.isPending} className="btn btn-primary">
         {saveMutation.isPending ? "Saving…" : "Save changes"}
       </button>
     </form>
@@ -148,6 +184,12 @@ const PersonalInfoForm = ({
 };
 
 const Account = () => {
+  useSeo({
+    title: "Your account | JME Forge Shop",
+    description: "Your orders and personal information.",
+    noindex: true,
+  });
+
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const [tab, setTab] = useState<Tab>("orders");
@@ -164,47 +206,42 @@ const Account = () => {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-16">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-light tracking-tight text-white sm:text-3xl">Your account</h1>
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="text-xs uppercase tracking-widest text-neutral-400 underline hover:text-white"
-        >
+    <section className="container-page max-w-4xl py-14 sm:py-20">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">My account</p>
+          <h1 className="section-title mt-3">Your account</h1>
+          <p className="mt-3 text-sm text-muted">{user.email}</p>
+        </div>
+        <button type="button" onClick={handleSignOut} className="btn btn-outline">
           Sign out
         </button>
       </div>
 
       {checkoutSucceeded && (
-        <p className="mt-6 border border-neutral-700 bg-neutral-800 px-4 py-3 text-sm text-neutral-200">
-          Thanks for your order! It'll show up below shortly.
+        <p className="alert-info mt-8 flex items-center gap-3">
+          <CheckIcon className="h-5 w-5 shrink-0" />
+          Thanks for your order! It&rsquo;ll show up below shortly.
         </p>
       )}
 
-      <div className="mt-8 flex gap-8 border-b border-neutral-700">
-        <button
-          type="button"
-          onClick={() => setTab("orders")}
-          className={`pb-3 text-xs uppercase tracking-widest transition-colors ${
-            tab === "orders"
-              ? "border-b-2 border-white text-white"
-              : "text-neutral-500 hover:text-white"
-          }`}
-        >
-          Orders
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab("personal")}
-          className={`pb-3 text-xs uppercase tracking-widest transition-colors ${
-            tab === "personal"
-              ? "border-b-2 border-white text-white"
-              : "text-neutral-500 hover:text-white"
-          }`}
-        >
-          Personal information
-        </button>
+      <div role="tablist" className="mt-10 flex gap-8 border-b border-line">
+        {tabs.map((tabOption) => (
+          <button
+            key={tabOption.value}
+            type="button"
+            role="tab"
+            aria-selected={tab === tabOption.value}
+            onClick={() => setTab(tabOption.value)}
+            className={`-mb-px border-b-2 pb-3 text-[0.7rem] font-semibold tracking-[0.2em] uppercase transition-colors ${
+              tab === tabOption.value
+                ? "border-ember text-fg"
+                : "border-transparent text-subtle hover:text-fg"
+            }`}
+          >
+            {tabOption.label}
+          </button>
+        ))}
       </div>
 
       <div className="mt-8">
