@@ -155,8 +155,8 @@ canonical URLs, Open Graph URLs, and the sitemap) — it defaults to `http://loc
 On-page copy targets realistic search terms: broad national terms like "kitchen knives" are
 extremely competitive and unlikely to rank for a new small site regardless of technical SEO;
 the actual strategy here is long-tail + local ("custom kitchen knife Lancashire", "handmade
-knife maker Chorley") plus the lower-competition niches (karambits, custom swords). Setting up
-a free Google Business Profile for the Chorley area is likely to matter at least as much as
+knife maker Euxton") plus the lower-competition niches (karambits, custom swords). Setting up
+a free Google Business Profile for the Euxton area is likely to matter at least as much as
 anything on the site itself for local search visibility, and isn't something code can do.
 
 ## Before going live

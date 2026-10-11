@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "JME Forge Shop",
   ownerName: "Josh Ellison",
-  location: "Chorley, Lancashire",
+  location: "Euxton, Lancashire",
   instagramUrl: "https://www.instagram.com/jme_forge",
   instagramHandle: "@jme_forge",
 };

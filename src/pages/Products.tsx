@@ -91,7 +91,7 @@ const Products = () => {
         <h1 className="section-title mt-3">Handmade Knives, Swords &amp; Karambits</h1>
         <p className="mt-5 text-base leading-relaxed text-muted">
           Every knife, sword, and karambit below is fully custom and hand-forged to order by Josh
-          Ellison in Chorley, Lancashire — from everyday kitchen knives to one-of-a-kind pieces.
+          Ellison in Euxton, Lancashire — from everyday kitchen knives to one-of-a-kind pieces.
         </p>
       </header>
 

@@ -19,7 +19,7 @@ import NotFound from "./NotFound";
 const RELATED_COUNT = 4;
 
 const perks = [
-  { Icon: HammerIcon, text: "Hand forged by Josh in Chorley, Lancashire" },
+  { Icon: HammerIcon, text: "Hand forged by Josh in Euxton, Lancashire" },
   { Icon: SparkIcon, text: "One of a kind — no two pieces are alike" },
   { Icon: LockIcon, text: "Secure checkout powered by Stripe" },
 ];

@@ -4,20 +4,20 @@ import type { Product } from "../types/product";
 export const siteName = siteConfig.name;
 
 export const homeMeta = {
-  title: "JME Forge Shop | Handmade Custom Knives & Swords, Chorley, Lancashire",
+  title: "JME Forge Shop | Handmade Custom Knives & Swords, Euxton, Lancashire",
   description:
-    "Hand-forged custom knives, kitchen knives, and swords made by Josh Ellison in Chorley, Lancashire. Every piece is one of a kind.",
+    "Hand-forged custom knives, kitchen knives, and swords made by Josh Ellison in Euxton, Lancashire. Every piece is one of a kind.",
 };
 
 export const productsMeta = {
   title: "Handmade Knives, Swords & Karambits | JME Forge Shop",
   description:
-    "Shop hand-forged custom knives, kitchen knives, swords, and karambits made by Josh Ellison in Chorley, Lancashire, UK.",
+    "Shop hand-forged custom knives, kitchen knives, swords, and karambits made by Josh Ellison in Euxton, Lancashire, UK.",
 };
 
 export const getProductMeta = (product: Pick<Product, "name" | "description">) => ({
   title: `${product.name} | ${siteName}`,
-  description: `${product.description} Hand-forged by Josh Ellison in Chorley, Lancashire, UK.`,
+  description: `${product.description} Hand-forged by Josh Ellison in Euxton, Lancashire, UK.`,
 });
 
 export const localBusinessJsonLd = {
@@ -27,7 +27,7 @@ export const localBusinessJsonLd = {
   description: homeMeta.description,
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Chorley",
+    addressLocality: "Euxton",
     addressRegion: "Lancashire",
     addressCountry: "GB",
   },
