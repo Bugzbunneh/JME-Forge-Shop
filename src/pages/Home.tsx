@@ -137,8 +137,8 @@ const Home = () => {
       )}
 
       <section className="container-page reveal grid items-center gap-12 pt-24 md:grid-cols-2 md:gap-16">
-        <div className="relative mx-auto w-full max-w-md md:max-w-none">
-          <div className="absolute -inset-2 translate-x-2 translate-y-2 rounded-xs sm:-inset-3 sm:translate-x-3 sm:translate-y-3 border border-ember/40" />
+        <div className="relative isolate mx-auto w-full max-w-md md:max-w-none">
+          <div className="absolute -inset-4 -z-10 rounded-full bg-ember/15 blur-3xl sm:-inset-6" />
           <img
             src="/images/josh-at-anvil.jpg"
             alt="Josh Ellison at the anvil in the J.M.E Forge workshop"
